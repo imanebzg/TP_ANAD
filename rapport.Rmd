@@ -1,0 +1,101 @@
+---
+title: "TP Analyse Factorielle (ACM)"
+author: "Djebrouni Wafa Feriel_ Bouzeguella Imane"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+# Introduction
+
+Ce rapport présente une **analyse descriptive et factorielle** du dataset `shopping_behavior.csv`.\
+L'objectif est de comprendre le comportement des clients à partir de leurs achats et variables associées.
+
+# 1. Installation et chargement des packages
+```{r setup, message=FALSE, warning=FALSE,echo=FALSE}
+if(!require(FactoMineR)) install.packages("FactoMineR", dependencies = TRUE)
+if(!require(factoextra)) install.packages("factoextra")
+if(!require(dplyr)) install.packages("dplyr")
+if(!require(ggplot2)) install.packages("ggplot2")
+if(!require(ade4)) install.packages("ade4")
+if(!require(knitr)) install.packages("knitr")
+
+
+library(FactoMineR)
+library(factoextra)
+library(dplyr)
+library(ggplot2)
+library(ade4)
+library(knitr)
+
+
+```
+```{r message=FALSE, warning=FALSE,echo=FALSE}
+data <- read.csv("shopping_behavior.csv", stringsAsFactors = TRUE)
+
+
+
+```
+
+
+# Dimensions et structure
+```{r message=FALSE, warning=FALSE,echo=FALSE}
+dim(data)
+str(data)
+summary(data)
+```
+
+# Statistiques descriptives
+```{r message=FALSE, warning=FALSE,echo=FALSE}
+quant_var <- data$Purchase.Amount..USD.
+
+cat("Moyenne :", mean(quant_var), "\n")
+cat("Médiane :", median(quant_var), "\n")
+cat("Minimum :", min(quant_var), "\n")
+cat("Maximum :", max(quant_var), "\n")
+cat("Écart-type :", sd(quant_var), "\n")
+
+```
+
+
+# Histogramme
+
+```{r message=FALSE, warning=FALSE,echo=FALSE}
+hist(quant_var, main="Histogram of Purchase Amount",
+     xlab="Purchase Amount (USD)", col="skyblue")
+qual_vars <- c("Gender", "Item.Purchased", "Category", "Location",
+               "Size", "Color", "Season", "Subscription.Status",
+               "Shipping.Type", "Discount.Applied", "Promo.Code.Used",
+               "Payment.Method", "Frequency.of.Purchases")
+
+
+
+```
+
+
+
+# Tableaux de fréquences et barplots
+```{r message=FALSE, warning=FALSE,echo=FALSE}
+for (v in qual_vars) {
+  cat("\n### Tableau de fréquences pour :", v, "\n")
+  print(table(data[[v]]))
+  
+  barplot(table(data[[v]]), main=paste("Barplot of", v),
+          col="lightgreen", las=2)
+}
+```
+
+
+# Tableau disjonctif (one-hot) pour ACM
+```{r message=FALSE, warning=FALSE,echo=FALSE }
+data_qual <- data[, qual_vars]
+
+# Tableau disjonctif (one-hot)
+tdc <- acm.disjonctif(data_qual)
+
+# Vérification
+cat("Somme des lignes (doit être égal au nombre de variables qualitatives) :\n")
+rowSums(tdc)
+head(tdc)
+
+```
+
