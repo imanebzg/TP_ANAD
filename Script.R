@@ -1,6 +1,6 @@
 # =========================
 # TP Analyse Factorielle (ACM)
-# Dataset : shopping_behavior_updated.csv
+# Dataset : shopping_behavior.csv (sans Customer ID)
 # =========================
 
 # -------------------------
@@ -21,7 +21,7 @@ library(ade4)
 # -------------------------
 # Étape 1 : Charger le dataset
 # -------------------------
-data <- read.csv("shopping_behavior_updated.csv", stringsAsFactors = TRUE)
+data <- read.csv("shopping_behavior.csv", stringsAsFactors = TRUE)
 
 # Aperçu
 dim(data)
@@ -70,56 +70,3 @@ tdc <- acm.disjonctif(data_qual)
 # Vérification des marges
 rowSums(tdc)  # doit être égal au nombre de variables qualitatives
 head(tdc)
-
-# Tableau de Burt (facultatif)
-burt_tab <- Burt(tdc)
-head(burt_tab)
-
-# -------------------------
-# Étape 4 : Analyse factorielle des correspondances multiples (ACM)
-# -------------------------
-acm_res <- MCA(data_qual, graph = FALSE)
-
-# Résultats
-acm_res$eig  # valeurs propres, inertie
-acm_res$ind$coord  # coordonnées des individus
-acm_res$ind$contrib # contributions des individus
-acm_res$ind$cos2    # qualité de représentation des individus
-
-acm_res$var$coord   # coordonnées des modalités
-acm_res$var$contrib # contributions des modalités
-acm_res$var$cos2    # qualité de représentation des modalités
-
-# η² pour les variables
-acm_res$var$eta2
-
-# -------------------------
-# Étape 5 : Visualisation
-# -------------------------
-# Individus
-fviz_mca_ind(acm_res, 
-             repel = TRUE, 
-             col.ind = "cos2",
-             gradient.cols = c("blue", "orange", "red"))
-
-# Modalités
-fviz_mca_var(acm_res, 
-             repel = TRUE, 
-             col.var = "contrib",
-             gradient.cols = c("blue", "orange", "red"))
-
-# Variables qualitatives
-fviz_mca_var(acm_res, choice="eta2", 
-             repel = TRUE,
-             col.var="cos2",
-             gradient.cols=c("purple","green","yellow"))
-
-# -------------------------
-# Étape 6 : Interprétation (à compléter dans ton rapport)
-# -------------------------
-# Exemple de guide d’interprétation :
-# - Examiner les axes factoriels : quelles variables contribuent le plus à chaque axe
-# - Identifier les modalités importantes
-# - Observer la proximité entre individus → profils similaires
-# - Observer la proximité entre modalités → associations entre catégories
-# - Décrire les groupements ou tendances
